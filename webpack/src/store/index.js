@@ -15,15 +15,15 @@ const state = {};
 const mutations = make.mutations(state);
 
 const store = new Vuex.Store({
-  // Don't forget the plugin!
   plugins: [pathify.plugin],
   state,
   mutations,
   modules: {
     user,
-    menu
+    menu,
   }
 });
+
 
 export default store
 window.store = store

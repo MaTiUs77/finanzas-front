@@ -43,7 +43,7 @@
     data () {
       return {
         title: 'Finanzas Personales',
-        drawer: true,
+        drawer: false,
         headerColor: 'primary'
       }
     },

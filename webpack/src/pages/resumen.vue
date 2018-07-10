@@ -114,22 +114,16 @@
 
 
 <script>
+  import axios from 'axios'
   var moment = require('moment');
   moment.locale('es');
-
-  import axios from 'axios'
-
 
   export default {
     data () {
       return {
         loading: false,
         filtroPeriodo: null,
-/*
-        periodoSelected: '',
-*/
         tabSelected: 'periodo-2018-01',
-
         porPeriodo:[],
 
         error: null
@@ -137,16 +131,13 @@
     },
     components: {
     },
+
     created: function () {
-      this.tabSelected= 'periodo-'+moment().format("YYYY-MM");
       this.getEgresos();
     },
+    computed: {
+    },
     watch: {
-/*
-      periodoSelected () {
-        this.getEgresos();
-      }
-*/
     },
     methods: {
       showDetail(item) {

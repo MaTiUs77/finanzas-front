@@ -3,6 +3,9 @@
     <v-slide-y-transition mode="out-in">
       <v-layout column wrap>
 
+        <modal-movimiento />
+
+
         <!-- ALERT -->
         <v-alert
           v-if="error"
@@ -63,32 +66,7 @@
           <!-- RESUMEN DE CUENTA -->
           <v-layout row wrap>
             <v-flex xs12 sm4 v-for="(item, index) in resumenPeriodo" :key="'movimiento_card-' + index">
-
-              <v-card color="grey lighten-3 ma-1">
-                <v-card-title>
-
-                  <v-flex xs8 text-xs-left>
-                    <div class="subheading">{{item.concepto}}</div>
-                  </v-flex>
-
-                  <v-flex xs4 text-xs-right>
-                    <div class="headline">${{item.monto}}</div>
-                  </v-flex>
-
-                  <v-flex xs8 text-xs-left>
-                    <div class="subheading"><small>{{item.categoria.nombre}}</small></div>
-                  </v-flex>
-
-                  <v-flex xs4 text-xs-right>
-                    <div class="subheading">{{item.cuota_nro}}/{{item.cuotas}}</div>
-                  </v-flex>
-
-                  <v-flex xs12 text-xs-center v-if="item.mode==='credito'">
-                    <div class="subheading"><small>{{item.mode}}</small></div>
-                  </v-flex>
-
-                </v-card-title>
-              </v-card>
+              <card-movimiento :item="item"/>
             </v-flex>
           </v-layout>
           <!-- ./RESUMEN DE CUENTA -->
@@ -107,6 +85,9 @@
 
   import axios from 'axios'
 
+  import CardMovimiento from '../components/card_movimiento_individual'
+  import ModalMovimiento from '../components/modal_movimiento'
+
   export default {
     data () {
       return {
@@ -122,6 +103,7 @@
       }
     },
     components: {
+      CardMovimiento, ModalMovimiento
     },
     created: function () {
       this.cuenta = this.$route.params.cuenta;
