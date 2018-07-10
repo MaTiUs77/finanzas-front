@@ -2,9 +2,9 @@
       <v-list>
         <v-list-tile
           value="true"
-          v-for="(item, i) in items"
+          v-for="(item, i) in menu.items"
           :key="i"
-          :to="{path:item.path}"
+          :to="{name:item.name}"
         >
           <v-list-tile-action>
             <v-icon v-html="item.icon"></v-icon>
@@ -17,21 +17,19 @@
 </template>
 
 <script>
+  import { sync } from 'vuex-pathify';
+
   export default {
     data () {
       return {
-        items: [
-          {
-            icon: 'home',
-            title: 'Inicio',
-            path: '/'
-          }
-        ]
       }
     },
     created: function () {
     },
     methods: {
+    },
+    computed: {
+      menu: sync('menu')
     }
   }
 </script>

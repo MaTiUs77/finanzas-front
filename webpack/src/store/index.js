@@ -7,6 +7,7 @@ import pathify from 'vuex-pathify';
 import { make } from 'vuex-pathify'
 
 import user from './model/user';
+import menu from './model/menu';
 
 Vue.use(Vuex);
 
@@ -19,7 +20,8 @@ const store = new Vuex.Store({
   state,
   mutations,
   modules: {
-    user
+    user,
+    menu
   }
 });
 
