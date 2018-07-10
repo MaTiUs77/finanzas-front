@@ -17,12 +17,9 @@
 </template>
 
 <script>
-  import { sync } from 'vuex-pathify';
-
   export default {
     data () {
       return {
-        networkStatus: null
       }
     },
     created: function () {
@@ -30,7 +27,9 @@
     methods: {
     },
     computed: {
-      user: sync('user')
+      user() {
+        return store.state.user;
+      }
     }
   }
 </script>

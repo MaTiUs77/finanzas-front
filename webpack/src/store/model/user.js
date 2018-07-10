@@ -1,13 +1,10 @@
-import { make } from 'vuex-pathify'
-
 // setup store
 const state = {
-  name: 'Matias Flores',
-}
-const mutations = make.mutations(state)
+  name: 'Usuario'
+};
 
-// create store
-export default {
-  state,
-  mutations
-}
+const module = {
+    state: state
+};
+
+export default module

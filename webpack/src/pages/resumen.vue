@@ -35,9 +35,9 @@
 
           <!-- TAB HEADER -->
           <v-tab
-            v-for="(item, i) in porPeriodo"
-            :href="'#periodo-' + i"
-            :key="i"
+            v-for="item in porPeriodo"
+            :href="'#periodo-' + item.periodo"
+            :key="'key_periodo_'+item.periodo"
           >
             {{ item.periodoMes }}
           </v-tab>
@@ -46,13 +46,12 @@
           <!-- TAB CONTENT -->
           <v-tabs-items>
             <v-tab-item
-              v-for="(resumenPeriodo , i) in porPeriodo"
-              :id="'periodo-' + i"
-              :key="i"
+              v-for="resumenPeriodo in porPeriodo"
+              :id="'periodo-' + resumenPeriodo.periodo"
+              :key="'key_resumen_periodo_'+resumenPeriodo.periodo"
             >
               <!-- CARD -->
               <v-card flat>
-
                 <!-- MONTO DEL MES -->
                 <v-layout row wrap>
                   <v-flex xs12>
@@ -123,7 +122,7 @@
       return {
         loading: false,
         filtroPeriodo: null,
-        tabSelected: 'periodo-2018-01',
+        tabSelected: null,
         porPeriodo:[],
 
         error: null
@@ -133,6 +132,7 @@
     },
 
     created: function () {
+      this.activateTab(moment().format("YYYY-MM"));
       this.getEgresos();
     },
     computed: {
@@ -140,14 +140,25 @@
     watch: {
     },
     methods: {
-      showDetail(item) {
-        console.log("showDetail",item);
+      activateTab(periodo) {
+        this.tabSelected = 'periodo-'+periodo;
       },
       periodoAMes(periodo) {
         return moment(periodo,"YYYY-MM").format("MMMM").replace(/\b\w/g, l => l.toUpperCase());
       },
       transformToPeriodo(response) {
         var vm = this;
+        // ARRAY DE CUENTAS
+        let listaCuentas = _.transform(response.data, function(result, item, key) {
+          (result[item.cuenta.nombre] || (result[item.cuenta.nombre] = {})).cuenta = item.cuenta;
+        }, {});
+
+        // ARRAY DE CUENTAS
+        let listaCategorias = _.transform(response.data, function(result, item, key) {
+          (result[item.categoria.nombre] || (result[item.categoria.nombre] = {})).categoria = item.categoria;
+        }, {});
+
+        // ARRAY DE PERIODOS
         vm.porPeriodo= _.transform(response.data, function(result, item, key) {
           let transformObject = {
             periodoMes: vm.periodoAMes(item.periodo),
@@ -161,6 +172,11 @@
           obj.monto = _.sumBy(obj.items,'monto');
           obj.porCuenta = vm.transformToCuenta(obj.items);
         });
+
+        // VUEX
+        store.commit('cuentas',listaCuentas);
+        store.commit('categorias',listaCategorias);
+        store.commit('periodos',vm.porPeriodo)
       },
       transformToCuenta(items) {
         var vm = this;
@@ -193,7 +209,6 @@
 
         axios.get(process.env.API_INGRESS+'/api/movimiento/egreso',{
           params: {
-            //periodo: vm.periodoSelected
             periodo: 'all'
           }
         }).then(function (response) {

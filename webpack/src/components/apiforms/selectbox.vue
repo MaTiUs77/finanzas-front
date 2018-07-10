@@ -1,7 +1,6 @@
 <template>
   <v-combobox
     dense
-    box
     clearable
 
     v-model="select"
@@ -10,6 +9,7 @@
     @click:clear="onClear"
     :label="label"
     :items="items"
+
     :loading="loading"
     :error="error"
     :error-messages="error_message"
@@ -23,7 +23,7 @@
     props: ['label','form','text','custom','selected'],
     data () {
       return {
-        apigw: process.env.SIEP_API_GW_INGRESS,
+        apigw: process.env.API_INGRESS,
         select: '',
         items: [],
 

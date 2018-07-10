@@ -1,6 +1,6 @@
 <template>
 <div>
-  <v-card color="grey lighten-3 ma-1"  @click.native="bottomSheet = true">
+  <v-card color="grey lighten-3 ma-1"  @click.native="bottomSheet = true" v-if="!deleted">
 
     <v-bottom-sheet v-model="bottomSheet">
       <v-list>
@@ -23,7 +23,10 @@
     <v-card-title>
 
       <v-flex xs8 text-xs-left>
-        <div class="subheading">{{item.concepto}}</div>
+        <div class="subheading">
+          <v-icon color="indigo lighten-2" v-if="item.mode==='credito'">face</v-icon>
+          {{item.concepto}}
+        </div>
       </v-flex>
 
       <v-flex xs4 text-xs-right>
@@ -38,16 +41,10 @@
         <div class="subheading">{{item.cuota_nro}}/{{item.cuotas}}</div>
       </v-flex>
 
-      <v-flex xs2 v-if="item.mode==='credito'">
-          <v-icon color="indigo lighten-2">face</v-icon>
-      </v-flex>
-      <v-flex xs2 v-if="item.debito">
-          <v-icon color="red lighten-2">account_balance</v-icon>
-      </v-flex>
-
     </v-card-title>
   </v-card>
 
+  <!-- MODAL DE EDICION -->
   <v-dialog v-model="modalMovimiento" width="800px">
     <v-card>
       <v-card-title class="grey lighten-4 py-4 title">
@@ -55,6 +52,14 @@
       </v-card-title>
       <v-container grid-list-sm class="pa-4">
         <v-layout row wrap>
+
+          <v-flex xs6>
+            <v-combobox
+                v-model="edit.categoria"
+                :items="categorias"
+                label="Categoria"
+            ></v-combobox>
+          </v-flex>
 
           <v-flex xs12>
             <v-text-field placeholder="Concepto" :value="item.concepto"></v-text-field>
@@ -89,6 +94,7 @@
     </v-card>
   </v-dialog>
 
+  <!-- SNACKBAR -->
   <v-snackbar v-model="deleteSnack">
     Eliminando...
   </v-snackbar>
@@ -97,14 +103,26 @@
 </template>
 
 <script>
+  import axios from 'axios'
   export default {
     props: ['item'],
     data () {
       return {
+        deleted: false,
         deleteSnack: false,
         bottomSheet: false,
         modalMovimiento: false,
         modalMovimientoEnCuotas: false,
+
+        edit: {
+          categoria: null
+        },
+        categorias: [
+          'Ocio',
+          'Camioneta',
+          'Nafta',
+          'Comida'
+        ]
       }
     },
     created: function () {
@@ -124,8 +142,25 @@
       },
       startDelete(item)
       {
-        this.bottomSheet = false;
-        this.deleteSnack = true;
+        var vm = this;
+        console.log(item);
+
+        vm.bottomSheet = false;
+        vm.deleteSnack = true;
+
+        axios({
+          method: 'DELETE',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          url: process.env.API_INGRESS + '/api/movimiento/egreso/'+item.id})
+          .then(function (response) {
+            vm.deleteSnack = false;
+            vm.deleted=true;
+          })
+          .catch(function (error) {
+            vm.deleteSnack = false;
+          });
       }
     }
   }

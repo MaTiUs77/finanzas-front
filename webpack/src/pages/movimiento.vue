@@ -2,9 +2,7 @@
   <v-container fluid>
     <v-slide-y-transition mode="out-in">
       <v-layout column wrap>
-
-        <modal-movimiento />
-
+        <modal-movimiento :cuenta="cuenta"/>
 
         <!-- ALERT -->
         <v-alert
@@ -65,7 +63,7 @@
 
           <!-- RESUMEN DE CUENTA -->
           <v-layout row wrap>
-            <v-flex xs12 sm4 v-for="(item, index) in resumenPeriodo" :key="'movimiento_card-' + index">
+            <v-flex xs12 sm6 v-for="(item, index) in resumenPeriodo" :key="'movimiento_card-' + index">
               <card-movimiento :item="item"/>
             </v-flex>
           </v-layout>
@@ -73,6 +71,7 @@
         </v-card>
         <!-- ./CARD -->
 
+        <br><br><br>
       </v-layout>
     </v-slide-y-transition>
   </v-container>
@@ -117,7 +116,7 @@
       periodoAMes(periodo) {
         return moment(periodo,"YYYY-MM").format("MMMM").replace(/\b\w/g, l => l.toUpperCase());
       },
-      getEgresos: function () {
+      getEgresos () {
         var vm = this;
         vm.loading = true;
         vm.error = false;
@@ -127,11 +126,8 @@
             periodo: vm.periodo
           }
         }).then(function (response) {
-
           vm.resumenPeriodo = response.data;
           vm.monto = _.sumBy(vm.resumenPeriodo,'monto');
-          console.log(vm.monto);
-
           vm.loading = false;
         })
         .catch(function (error) {
